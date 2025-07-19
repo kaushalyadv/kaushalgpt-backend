@@ -2,13 +2,15 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
 import torch
+import uvicorn
+import os
 
 app = FastAPI()
 
 # Allow your GitHub Pages frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # You can restrict to your GitHub Pages domain later
+    allow_origins=["*"],  # You can restrict this later
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -51,3 +53,7 @@ async def chat(request: Request):
         return {"response": reply}
     except Exception as e:
         return {"response": f"❌ Error: {str(e)}"}
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 10000))
+    uvicorn.run("app:app", host="0.0.0.0", port=port)
